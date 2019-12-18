@@ -50,8 +50,11 @@
             int counter = httpResponseWithoutBody.Length;
             for (int i = 0; i < this.Content.Length; i++)
             {
-                httpResponseWithBody[counter] = this.Content[i];
+                httpResponseWithBody[counter++] = this.Content[i];
             }
+
+            string responseHeaders = Encoding.UTF8.GetString(Content);
+            string responseString = Encoding.UTF8.GetString(httpResponseWithBody);
 
             return httpResponseWithBody;
         }
@@ -64,7 +67,7 @@
                 .Append($"{GlobalConstants.HttpOneProtocolFragment} {this.StatusCode.GetStatusLine()}")
                 .Append(GlobalConstants.HttpNewLine)
                 .Append($"{this.Headers}")
-                .AppendLine(GlobalConstants.HttpNewLine);
+                .Append(GlobalConstants.HttpNewLine);
 
             result.Append(GlobalConstants.HttpNewLine);
 

@@ -8,7 +8,7 @@
 
     public class HtmlResult : HttpResponse
     {
-        private const string DefaultContentType = "text/html; charset=utf-8";
+        private const string DefaultContentType = "text/html; charset=UTF-8";
         private const string HttpHeaderKey = "Content-Type";
 
         public HtmlResult(string content, HttpResponseStatusCode responseStatusCode)

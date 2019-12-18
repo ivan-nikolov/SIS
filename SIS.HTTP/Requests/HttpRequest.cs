@@ -61,7 +61,7 @@
 
         private void ParseRequestMethod(string[] requestLine)
         {
-            bool parseResult = Enum.TryParse(requestLine[0], out HttpRequestMethod method);
+            bool parseResult = Enum.TryParse(requestLine[0].Capitalize(), out HttpRequestMethod method);
 
             if (!parseResult)
             {
@@ -88,7 +88,7 @@
 
             foreach (var headerLine in requestContent)
             {
-                if (headerLine == GlobalConstants.HttpNewLine)
+                if (headerLine == string.Empty)
                 {
                     break;
                 }
