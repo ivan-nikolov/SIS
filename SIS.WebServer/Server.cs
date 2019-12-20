@@ -31,13 +31,15 @@
             this.listener.Start();
             this.isRunning = true;
 
+            Console.WriteLine($"Server started at http://{LocalHostIpAddress}:{this.port}");
+
             while (this.isRunning)
             {
                 Console.WriteLine("Waiting for client...");
 
-                var client = this.listener.AcceptSocket();
+                var client = this.listener.AcceptSocketAsync().GetAwaiter().GetResult();
 
-                this.Listen(client);
+                Task.Run(() => this.Listen(client));
             }
         }
 
@@ -45,7 +47,7 @@
         {
             var connectionHandler = new ConnectionHandler(client, this.serverRoutingTable);
 
-            connectionHandler.ProcessRequest();
+            await connectionHandler.ProcessRequestAsync();
         }
     }
 }

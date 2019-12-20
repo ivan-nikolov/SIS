@@ -3,6 +3,7 @@
     using System;
     using System.Net.Sockets;
     using System.Text;
+    using System.Threading.Tasks;
     using SIS.HTTP.Common;
     using SIS.HTTP.Enums;
     using SIS.HTTP.Exceptions;
@@ -27,11 +28,11 @@
             this.serverRoutingTable = serverRoutingTable;
         }
 
-        public void ProcessRequest()
+        public async Task ProcessRequestAsync()
         {
             try
             {
-                var httpRequest = this.ReadRequest();
+                var httpRequest = await this.ReadRequestAsync();
 
                 if (httpRequest != null)
                 {
@@ -39,29 +40,29 @@
 
                     var httpResponse = this.HandleRequest(httpRequest);
 
-                    this.PrepareResponse(httpResponse);
+                    await this.PrepareResponseAsync(httpResponse);
                 }
             }
             catch (BadRequestException bre)
             {
-                this.PrepareResponse(new TextResult(bre.ToString(), HttpResponseStatusCode.BadRequest));
+                await this.PrepareResponseAsync(new TextResult(bre.ToString(), HttpResponseStatusCode.BadRequest));
             }
             catch (Exception e)
             {
-                this.PrepareResponse(new TextResult(e.ToString(), HttpResponseStatusCode.InternalServerError));
+                await this.PrepareResponseAsync(new TextResult(e.ToString(), HttpResponseStatusCode.InternalServerError));
             }
 
             this.client.Shutdown(SocketShutdown.Both);
         }
 
-        private IHttpRequest ReadRequest()
+        private async Task<IHttpRequest> ReadRequestAsync()
         {
             var result = new StringBuilder();
             var data = new ArraySegment<byte>(new byte[1024]);
 
             while (true)
             {
-                int numberOfBytesRead = this.client.Receive(data.Array, SocketFlags.None);
+                int numberOfBytesRead = await this.client.ReceiveAsync(data, SocketFlags.None);
 
                 if (numberOfBytesRead == 0)
                 {
@@ -95,11 +96,11 @@
             return this.serverRoutingTable.Get(httpRequest.RequestMethod, httpRequest.Path).Invoke(httpRequest);
         }
 
-        private void PrepareResponse(IHttpResponse httpResponse)
+        private async Task PrepareResponseAsync(IHttpResponse httpResponse)
         {
-            byte[] byteSegments = httpResponse.GetBytes();
+            ArraySegment<byte> byteSegments = new ArraySegment<byte>( httpResponse.GetBytes());
 
-            this.client.Send(byteSegments, SocketFlags.None);
+            await this.client.SendAsync(byteSegments, SocketFlags.None);
         }
     }
 }
