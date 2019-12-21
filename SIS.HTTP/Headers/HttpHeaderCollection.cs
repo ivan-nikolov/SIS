@@ -34,12 +34,14 @@
         {
             CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
 
+            HttpHeader header = null;
+
             if (!this.headers.ContainsKey(key))
             {
-                return null;
+                header = this.headers[key];
             }
 
-            return this.headers[key];
+            return header;
         }
 
         public override string ToString() => string.Join(Environment.NewLine, this.headers.Select(v => v.Value.ToString()));

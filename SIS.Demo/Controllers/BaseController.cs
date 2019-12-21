@@ -3,8 +3,10 @@
     using System.IO;
     using System.Runtime.CompilerServices;
 
+    using HTTP.Cookies;
     using HTTP.Enums;
     using HTTP.Responses.Contracts;
+
     using WebServer.Results;
 
     public class BaseController
@@ -16,7 +18,11 @@
 
             string viewContent = File.ReadAllText("Views/" + controllerName + "/" + viewName + ".html");
 
-            return new HtmlResult(viewContent, HttpResponseStatusCode.Ok);
+            HtmlResult htmlResult = new HtmlResult(viewContent, HttpResponseStatusCode.Ok);
+
+            htmlResult.Cookies.AddCookie(new HttpCookie("lang", "en"));
+
+            return htmlResult;
         }
     }
 }

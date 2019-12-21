@@ -86,7 +86,7 @@
             {
                 foreach (var cookie in this.Cookies)
                 {
-                    result.Append($"Set-Cookie: {this.Cookies}").Append(GlobalConstants.HttpNewLine);
+                    result.Append($"Set-Cookie: {cookie}").Append(GlobalConstants.HttpNewLine);
                 }
             }
 
