@@ -20,6 +20,7 @@
 
     using Headers;
     using Headers.Contracts;
+    using SIS.HTTP.Sessions.Contracts;
 
     public class HttpRequest : IHttpRequest
     {
@@ -50,6 +51,8 @@
         public IHttpCookieCollection Cookies { get; }
 
         public HttpRequestMethod RequestMethod { get; private set; }
+
+        public IHttpSession Session { get; set; }
 
         private bool IsValidRequestLine(string[] requestLine)
         {
