@@ -2,22 +2,27 @@
 {
     using System;
     using System.Collections.Generic;
-
-    using Common;
-    using Enums;
-    using Extensions;
-    using Headers;
-    using Headers.Contracts;
-
-    using Contracts;
-    using SIS.HTTP.Exceptions;
     using System.Linq;
     using System.Text.RegularExpressions;
 
+    using Common;
+
+    using Contracts;
+
+    using Cookies;
+    using Cookies.Contracts;
+
+    using Enums;
+
+    using Exceptions;
+
+    using Extensions;
+
+    using Headers;
+    using Headers.Contracts;
+
     public class HttpRequest : IHttpRequest
     {
-        private const string HostHeaderKey = "Host";
-
         private const string QueryStringRegexPattern = @"^\?(\w+(=[\w-]*)?(&\w+(=[\w-]*)?)*)?$";
 
         public HttpRequest(string requestString)
@@ -27,6 +32,7 @@
             this.FormData = new Dictionary<string, object>();
             this.QueryData = new Dictionary<string, object>();
             this.Headers = new HttpHeaderCollection();
+            this.Cookies = new HttpCookieCollection();
 
             this.ParseRequest(requestString);
         }
@@ -40,6 +46,8 @@
         public Dictionary<string, object> QueryData { get; }
 
         public IHttpHeaderCollection Headers { get; }
+
+        public IHttpCookieCollection Cookies { get; }
 
         public HttpRequestMethod RequestMethod { get; private set; }
 
@@ -98,7 +106,7 @@
                 string key = httpHeaderParams[0];
                 string value = httpHeaderParams[1];
 
-                if (key == HostHeaderKey)
+                if (key == HttpHeader.Host)
                 {
                     isValidRequest = true;
                 }
@@ -110,6 +118,24 @@
             if (!isValidRequest)
             {
                 throw new BadRequestException();
+            }
+        }
+
+        private void ParseCookeis()
+        {
+            if (this.Headers.ContainsHeader(HttpHeader.Cookie))
+            {
+                var cookiePairs = this.Headers.GetHeader(HttpHeader.Cookie)
+                    .Value.Split(new[] { "; " }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var pair in cookiePairs)
+                {
+                    var keyValuePair = pair.Split(new[] { '=' }, 2);
+
+                    var httpCookie = new HttpCookie(keyValuePair[0], keyValuePair[1], false);
+
+                    this.Cookies.AddCookie(httpCookie);
+                }
             }
         }
 
@@ -189,6 +215,7 @@
             this.ParseRequestPath();
 
             this.ParseRequestHeaders(splitRequestContent.Skip(1).ToArray());
+            this.ParseCookeis();
 
             this.ParseRequestParameters(splitRequestContent[splitRequestContent.Length - 1]);
         }

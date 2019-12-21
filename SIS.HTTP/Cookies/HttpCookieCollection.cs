@@ -33,7 +33,14 @@
         {
             CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
 
-            return this.httpCookies[key];
+            HttpCookie httpCookie = null;
+
+            if (this.httpCookies.ContainsKey(key))
+            {
+                httpCookie = this.httpCookies[key];
+            }
+
+            return httpCookie;
         }
 
         public bool HasCookies()
