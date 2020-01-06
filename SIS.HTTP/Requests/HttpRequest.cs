@@ -174,19 +174,25 @@
 
         private void ParseRequestFormDataParameters(string requestBody)
         {
-            if (!string.IsNullOrEmpty(requestBody))
+            if (string.IsNullOrEmpty(requestBody) == false)
             {
-                if (this.IsValidRequestQueryString(requestBody))
+                //TODO: Parse Multiple Parameters By Name
+                var paramsPairs = requestBody
+                   .Split('&')
+                   .Select(plainQueryParameter => plainQueryParameter.Split('='))
+                   .ToList();
+
+                foreach (var paramPair in paramsPairs)
                 {
-                    var queryParameters = requestBody.Split('&')
-                    .ToList();
+                    string key = paramPair[0];
+                    string value = paramPair[1];
 
-                    foreach (var queryParameterKeyValuePair in queryParameters)
+                    if (this.FormData.ContainsKey(key) == false)
                     {
-                        string[] keyValueArguments = this.SplitQueryParameter(queryParameterKeyValuePair);
-
-                        this.FormData.Add(keyValueArguments[0], keyValueArguments[1]);
+                        this.FormData.Add(key, new HashSet<string>());
                     }
+
+                    ((ISet<string>)this.FormData[key]).Add(value);
                 }
             }
         }
