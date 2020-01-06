@@ -4,10 +4,9 @@
     using System.IO;
     using System.Runtime.CompilerServices;
 
-    using HTTP.Cookies;
     using HTTP.Enums;
-    using HTTP.Responses.Contracts;
-    using SIS.HTTP.Requests.Contracts;
+    using SIS.HTTP.Requests;
+    using SIS.HTTP.Responses;
     using WebServer.Results;
 
     public class BaseController

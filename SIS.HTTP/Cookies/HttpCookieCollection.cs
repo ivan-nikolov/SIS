@@ -2,9 +2,7 @@
 {
     using System.Collections;
     using System.Collections.Generic;
-    using System.Text;
     using Common;
-    using Cookies.Contracts;
 
     public class HttpCookieCollection : IHttpCookieCollection
     {
@@ -15,11 +13,14 @@
             this.httpCookies = new Dictionary<string, HttpCookie>();
         }
 
-        public void AddCookie(HttpCookie cookie)
+        public void AddCookie(HttpCookie httpCookie)
         {
-            CoreValidator.ThrowIfNull(cookie, nameof(cookie));
+            CoreValidator.ThrowIfNull(httpCookie, nameof(httpCookie));
 
-            this.httpCookies.Add(cookie.Key, cookie);
+            if (!this.ContainsCookie(httpCookie.Key))
+            {
+                this.httpCookies.Add(httpCookie.Key, httpCookie);
+            }
         }
 
         public bool ContainsCookie(string key)

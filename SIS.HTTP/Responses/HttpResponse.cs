@@ -4,12 +4,9 @@
     using Enums;
 
     using Headers;
-    using Headers.Contracts;
 
-    using Responses.Contracts;
     using SIS.HTTP.Common;
     using SIS.HTTP.Cookies;
-    using SIS.HTTP.Cookies.Contracts;
     using SIS.HTTP.Extensions;
 
     public class HttpResponse : IHttpResponse

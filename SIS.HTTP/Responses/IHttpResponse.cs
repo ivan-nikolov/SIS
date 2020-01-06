@@ -1,16 +1,14 @@
-﻿namespace SIS.HTTP.Responses.Contracts
+﻿namespace SIS.HTTP.Responses
 {
     using Enums;
     using Headers;
-    using Headers.Contracts;
     using SIS.HTTP.Cookies;
-    using SIS.HTTP.Cookies.Contracts;
 
     public interface IHttpResponse
     {
         HttpResponseStatusCode StatusCode { get; set; }
 
-        IHttpHeaderCollection Headers { get;}
+        IHttpHeaderCollection Headers { get; }
 
         IHttpCookieCollection Cookies { get; }
 

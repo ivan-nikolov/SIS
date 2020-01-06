@@ -1,4 +1,4 @@
-﻿namespace SIS.HTTP.Cookies.Contracts
+﻿namespace SIS.HTTP.Cookies
 {
     using System.Collections.Generic;
 

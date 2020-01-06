@@ -5,7 +5,6 @@
     using System.Linq;
 
     using Common;
-    using Contracts;
 
     public class HttpHeaderCollection : IHttpHeaderCollection
     {

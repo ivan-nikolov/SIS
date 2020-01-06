@@ -6,6 +6,8 @@
     {
         public const string Cookie = "Cookie";
         public const string Host = "Host";
+        public const string ContentLength = "Content-Length";
+        public const string ContentDisposition = "Content-Disposition";
 
         public HttpHeader(string key, string value)
         {

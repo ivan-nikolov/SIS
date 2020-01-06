@@ -1,13 +1,12 @@
-﻿using System;
-using Demo.Data;
-using SIS.Demo.Controllers;
-using SIS.HTTP.Enums;
-using SIS.WebServer;
-using SIS.WebServer.Routing;
-using SIS.WebServer.Routing.Contracts;
+﻿using Demo.Data;
 
 namespace SIS.Demo
 {
+    using SIS.Demo.Controllers;
+    using SIS.HTTP.Enums;
+    using SIS.WebServer;
+    using SIS.WebServer.Routing;
+
     class Launcher
     {
         static void Main(string[] args)

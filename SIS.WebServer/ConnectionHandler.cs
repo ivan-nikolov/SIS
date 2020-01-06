@@ -1,19 +1,20 @@
 ﻿namespace SIS.WebServer
 {
     using System;
+    using System.IO;
     using System.Net.Sockets;
+    using System.Reflection;
     using System.Text;
     using System.Threading.Tasks;
+
     using SIS.HTTP.Common;
     using SIS.HTTP.Cookies;
     using SIS.HTTP.Enums;
     using SIS.HTTP.Exceptions;
     using SIS.HTTP.Requests;
-    using SIS.HTTP.Requests.Contracts;
-    using SIS.HTTP.Responses.Contracts;
-    using SIS.HTTP.Sessions;
+    using SIS.HTTP.Responses;
     using SIS.WebServer.Results;
-    using SIS.WebServer.Routing.Contracts;
+    using SIS.WebServer.Routing;
     using SIS.WebServer.Sessions;
 
     public class ConnectionHandler
@@ -91,11 +92,32 @@
             return new HttpRequest(result.ToString());
         }
 
+        private IHttpResponse ReturnIfResource(IHttpRequest httpRequest)
+        {
+            string folderPrefix = "/..";
+            string folderPath = "/Resources";
+            string assemblyPath = Assembly.GetExecutingAssembly().Location;
+            string requestPath = httpRequest.Path;
+
+            string fullPath = assemblyPath + folderPrefix + folderPath + requestPath;
+
+            if (File.Exists(fullPath))
+            {
+                byte[] content = File.ReadAllBytes(fullPath);
+
+                return new InlineResourceResult(content, HttpResponseStatusCode.Ok);
+            }
+            else
+            {
+                return new TextResult($"Route with method {httpRequest.RequestMethod} and path \"{httpRequest.Path}\" not found.", HttpResponseStatusCode.NotFound);
+            }
+        }
+
         private IHttpResponse HandleRequest(IHttpRequest httpRequest)
         {
             if (!this.serverRoutingTable.Contains(httpRequest.RequestMethod, httpRequest.Path))
             {
-                return new TextResult($"Rout with method {httpRequest.RequestMethod} and path \"{httpRequest.Path}\" not found.", HttpResponseStatusCode.NotFound);
+                return this.ReturnIfResource(httpRequest);
             }
 
             return this.serverRoutingTable.Get(httpRequest.RequestMethod, httpRequest.Path).Invoke(httpRequest);

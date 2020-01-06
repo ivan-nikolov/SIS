@@ -7,10 +7,8 @@
 
     using Common;
 
-    using Contracts;
 
     using Cookies;
-    using Cookies.Contracts;
 
     using Enums;
 
@@ -19,8 +17,7 @@
     using Extensions;
 
     using Headers;
-    using Headers.Contracts;
-    using SIS.HTTP.Sessions.Contracts;
+    using SIS.HTTP.Sessions;
 
     public class HttpRequest : IHttpRequest
     {

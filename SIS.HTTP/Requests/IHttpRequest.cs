@@ -1,11 +1,11 @@
-﻿namespace SIS.HTTP.Requests.Contracts
+﻿namespace SIS.HTTP.Requests
 {
     using System.Collections.Generic;
 
     using Enums;
-    using Headers.Contracts;
-    using SIS.HTTP.Cookies.Contracts;
-    using SIS.HTTP.Sessions.Contracts;
+    using SIS.HTTP.Cookies;
+    using SIS.HTTP.Headers;
+    using SIS.HTTP.Sessions;
 
     public interface IHttpRequest
     {
