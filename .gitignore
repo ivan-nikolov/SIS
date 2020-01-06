@@ -246,6 +246,7 @@ ServiceFabricBackup/
 *.mdf
 *.ldf
 *.ndf
+Configuration.cs
 
 # Business Intelligence projects
 *.rdl.data

@@ -36,7 +36,7 @@
 
             HttpHeader header = null;
 
-            if (!this.headers.ContainsKey(key))
+            if (this.headers.ContainsKey(key))
             {
                 header = this.headers[key];
             }

@@ -24,7 +24,7 @@
 
     public class HttpRequest : IHttpRequest
     {
-        private const string QueryStringRegexPattern = @"^\?(\w+(=[\w-]*)?(&\w+(=[\w-]*)?)*)?$";
+        private const string QueryStringRegexPattern = @"^(\w+(=[\w-]*)?(&\w+(=[\w-]*)?)*)?$";
 
         public HttpRequest(string requestString)
         {

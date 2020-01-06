@@ -117,17 +117,16 @@
                 var cookie = httpRequest.Cookies.GetCookie(HttpSessionStorage.SessionCookieKey);
 
                 sessionId = cookie.Value;
-
-                httpRequest.Session = HttpSessionStorage.GetSession(sessionId);
             }
             else
             {
                 sessionId = Guid.NewGuid().ToString();
 
-                httpRequest.Session = HttpSessionStorage.GetSession(sessionId);
             }
 
-            return sessionId;
+            httpRequest.Session = HttpSessionStorage.GetSession(sessionId);
+
+            return httpRequest.Session.Id;
         }
 
         private void SetResponseSession(IHttpResponse httpResponse, string sessionId)

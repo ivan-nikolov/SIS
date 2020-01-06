@@ -7,11 +7,24 @@ namespace SIS.Demo.Controllers
 {
     public class HomeController : BaseController
     {
-        public IHttpResponse Home(IHttpRequest request)
+        public HomeController(IHttpRequest httpRequest)
         {
-            //string content = @"<h1>Hello World</h1>";
+            this.httpRequest = httpRequest;
+        }
 
-            //return new HtmlResult(content, HttpResponseStatusCode.Ok);
+        public IHttpResponse Index(IHttpRequest request)
+        {
+            return this.View();
+        }
+
+        public IHttpResponse Home(IHttpRequest httpRequest)
+        {
+            if (!this.IsLoggedIn())
+            {
+                return this.Redirect("login");
+            }
+
+            this.ViewData["Username"] = this.httpRequest.Session.GetParameter("username");
 
             return this.View();
         }
