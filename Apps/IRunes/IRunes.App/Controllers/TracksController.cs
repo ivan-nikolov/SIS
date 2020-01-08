@@ -6,20 +6,16 @@
     using IRunes.App.Extensions;
     using IRunes.Data;
     using IRunes.Models;
-    using SIS.HTTP.Requests;
-    using SIS.HTTP.Responses;
     using SIS.MvcFramework;
     using SIS.MvcFramework.Attributes.Http;
+    using SIS.MvcFramework.Attributes.Security;
+    using SIS.MvcFramework.Results;
 
     public class TracksController : Controller
     {
-        public IHttpResponse Create()
+        [Authorize]
+        public ActionResult Create()
         {
-            if (!this.IsLoggedIn())
-            {
-                return this.Redirect("/Users/Login");
-            }
-
             string albumId = (string)this.Request.QueryData["albumId"];
 
             this.ViewData["AlbumId"] = albumId;
@@ -27,14 +23,10 @@
             return this.View();
         }
 
+        [Authorize]
         [HttpPost(ActionName = "Create")]
-        public IHttpResponse CreateConfirm()
+        public ActionResult CreateConfirm()
         {
-            if (!this.IsLoggedIn())
-            {
-                return this.Redirect("/Users/Login");
-            }
-
             string albumId = (string)this.Request.QueryData["albumId"];
 
             using (var context = new RunesDbContext())
@@ -69,13 +61,9 @@
             return this.Redirect($"/Albums/Details?id={albumId}");
         }
 
-        public IHttpResponse Details()
+        [Authorize]
+        public ActionResult Details()
         {
-            if (!this.IsLoggedIn())
-            {
-                return this.Redirect("/Users/Login");
-            }
-
             string trackId = (string)this.Request.QueryData["trackId"];
             string albumId = (string)this.Request.QueryData["albumId"];
 

@@ -7,6 +7,8 @@
     using SIS.HTTP.Responses;
     using SIS.MvcFramework.Attributes.Action;
     using SIS.MvcFramework.Attributes.Http;
+    using SIS.MvcFramework.Attributes.Security;
+    using SIS.MvcFramework.Results;
     using SIS.MvcFramework.Routing;
 
     public static class WebHost
@@ -70,7 +72,18 @@
                         var controllerInstance = Activator.CreateInstance(controller);
                         ((Controller)controllerInstance).Request = request;
 
-                        var response = action.Invoke(controllerInstance, new[] { request }) as IHttpResponse;
+                        var controllerPrincipal = ((Controller)controllerInstance).User;
+                        var authorizeAttribute = action.GetCustomAttributes()
+                            .LastOrDefault(a => a.GetType() == typeof(AuthorizeAttribute)) as AuthorizeAttribute;
+                        if (authorizeAttribute != null &&
+                        (controllerPrincipal == null
+                            && !authorizeAttribute.IsInAuthority(controllerPrincipal)))
+                        {
+                            return new HttpResponse(HttpResponseStatusCode.Forbidden); //TODO Redirect to configured URL
+                        }
+
+
+                        var response = action.Invoke(controllerInstance, new object[] {}) as ActionResult;
                         return response;
                     });
 

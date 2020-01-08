@@ -9,17 +9,14 @@
     using Microsoft.EntityFrameworkCore;
     using SIS.MvcFramework;
     using SIS.MvcFramework.Attributes.Http;
+    using SIS.MvcFramework.Attributes.Security;
     using SIS.MvcFramework.Results;
 
     public class AlbumsController : Controller
     {
+        [Authorize]
         public ActionResult All()
         {
-            if (!this.IsLoggedIn())
-            {
-                return this.Redirect("/Users/Login");
-            }
-
             using (var context = new RunesDbContext())
             {
                 ICollection<Album> allAlbums = context.Albums.ToList();
@@ -38,24 +35,16 @@
             return this.View();
         }
 
+        [Authorize]
         public ActionResult Create()
         {
-            if (!this.IsLoggedIn())
-            {
-                return this.Redirect("/Users/Login");
-            }
-
             return this.View();
         }
 
+        [Authorize]
         [HttpPost(ActionName = "Create")]
         public ActionResult CreateConfirm()
         {
-            if (!this.IsLoggedIn())
-            {
-                return this.Redirect("/Users/Login");
-            }
-
             string name = ((ISet<string>)this.Request.FormData["name"]).FirstOrDefault();
             string cover = ((ISet<string>)this.Request.FormData["cover"]).FirstOrDefault();
 
@@ -76,13 +65,9 @@
             return this.Redirect("/Albums/All");
         }
 
+        [Authorize]
         public ActionResult Details()
         {
-            if (!this.IsLoggedIn())
-            {
-                return this.Redirect("/Users/Login");
-            }
-
             string albumId = (string)this.Request.QueryData["id"];
 
             using (var context = new RunesDbContext())

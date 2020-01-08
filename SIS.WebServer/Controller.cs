@@ -17,7 +17,9 @@
             this.ViewData = new Dictionary<string, object>();
         }
 
-        protected Principal User => this.Request.Session.GetParameter("principal") as Principal;
+        public Principal User => this.Request.Session.ContainsParameter("principal") 
+            ? this.Request.Session.GetParameter("principal") as Principal
+            : null;
 
         public IHttpRequest Request { get; set; }
 
@@ -52,7 +54,7 @@
 
         protected bool IsLoggedIn()
         {
-            return this.User != null;
+            return this.Request.Session.ContainsParameter("principal");
         }
 
         private string ParseTemplate(string viewContent)
