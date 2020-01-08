@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using IRunes.App.Extensions;
-using IRunes.Data;
-using IRunes.Models;
-using Microsoft.EntityFrameworkCore;
-using SIS.HTTP.Requests;
-using SIS.HTTP.Responses;
-
-namespace IRunes.App.Controllers
+﻿namespace IRunes.App.Controllers
 {
-    public class AlbumsController : BaseController
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using IRunes.App.Extensions;
+    using IRunes.Data;
+    using IRunes.Models;
+    using Microsoft.EntityFrameworkCore;
+    using SIS.HTTP.Requests;
+    using SIS.HTTP.Responses;
+    using SIS.MvcFramework;
+    using SIS.MvcFramework.Attributes;
+
+    public class AlbumsController : Controller
     {
         public IHttpResponse All(IHttpRequest httpRequest)
         {
@@ -47,6 +49,7 @@ namespace IRunes.App.Controllers
             return this.View();
         }
 
+        [HttpPost(ActionName = "Create")]
         public IHttpResponse CreateConfirm(IHttpRequest httpRequest)
         {
             if (!this.IsLoggedIn(httpRequest))

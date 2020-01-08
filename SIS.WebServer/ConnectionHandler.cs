@@ -1,4 +1,4 @@
-﻿namespace SIS.WebServer
+﻿namespace SIS.MvcFramework
 {
     using System;
     using System.IO;
@@ -13,9 +13,9 @@
     using SIS.HTTP.Exceptions;
     using SIS.HTTP.Requests;
     using SIS.HTTP.Responses;
-    using SIS.WebServer.Results;
-    using SIS.WebServer.Routing;
-    using SIS.WebServer.Sessions;
+    using SIS.MvcFramework.Results;
+    using SIS.MvcFramework.Routing;
+    using SIS.MvcFramework.Sessions;
 
     public class ConnectionHandler
     {
@@ -125,7 +125,7 @@
 
         private async Task PrepareResponseAsync(IHttpResponse httpResponse)
         {
-            ArraySegment<byte> byteSegments = new ArraySegment<byte>( httpResponse.GetBytes());
+            ArraySegment<byte> byteSegments = new ArraySegment<byte>(httpResponse.GetBytes());
 
             await this.client.SendAsync(byteSegments, SocketFlags.None);
         }

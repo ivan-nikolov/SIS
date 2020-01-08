@@ -1,22 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using IRunes.Data;
-using IRunes.Models;
-using SIS.HTTP.Requests;
-using SIS.HTTP.Responses;
-
-namespace IRunes.App.Controllers
+﻿namespace IRunes.App.Controllers
 {
-    public class UsersController : BaseController
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Security.Cryptography;
+    using System.Text;
+    using IRunes.Data;
+    using IRunes.Models;
+    using SIS.HTTP.Requests;
+    using SIS.HTTP.Responses;
+    using SIS.MvcFramework;
+    using SIS.MvcFramework.Attributes;
+
+    public class UsersController : Controller
     {
         public IHttpResponse Login(IHttpRequest httpRequest)
         {
             return this.View();
         }
 
+        [HttpPost(ActionName = "Login")]
         public IHttpResponse LoginConfirm(IHttpRequest httpRequest)
         {
             using (var context = new RunesDbContext())
@@ -34,7 +37,7 @@ namespace IRunes.App.Controllers
                     return this.Redirect("/Users/Login");
                 }
 
-                this.SignIn(httpRequest, user);
+                this.SignIn(httpRequest, user.Id, user.Username, user.Email);
             }
 
 
@@ -46,6 +49,7 @@ namespace IRunes.App.Controllers
             return this.View();
         }
 
+        [HttpPost(ActionName = "Register")]
         public IHttpResponse RegisterConfirm(IHttpRequest httpRequest)
         {
             string username = ((ISet<string>)httpRequest.FormData["username"]).FirstOrDefault();

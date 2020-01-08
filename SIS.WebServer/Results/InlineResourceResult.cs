@@ -1,4 +1,4 @@
-﻿namespace SIS.WebServer.Results
+﻿namespace SIS.MvcFramework.Results
 {
     using SIS.HTTP.Enums;
     using SIS.HTTP.Headers;
