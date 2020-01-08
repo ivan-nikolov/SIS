@@ -13,14 +13,14 @@
 
     public class TracksController : Controller
     {
-        public IHttpResponse Create(IHttpRequest httpRequest)
+        public IHttpResponse Create()
         {
-            if (!this.IsLoggedIn(httpRequest))
+            if (!this.IsLoggedIn())
             {
                 return this.Redirect("/Users/Login");
             }
 
-            string albumId = (string)httpRequest.QueryData["albumId"];
+            string albumId = (string)this.Request.QueryData["albumId"];
 
             this.ViewData["AlbumId"] = albumId;
 
@@ -28,14 +28,14 @@
         }
 
         [HttpPost(ActionName = "Create")]
-        public IHttpResponse CreateConfirm(IHttpRequest httpRequest)
+        public IHttpResponse CreateConfirm()
         {
-            if (!this.IsLoggedIn(httpRequest))
+            if (!this.IsLoggedIn())
             {
                 return this.Redirect("/Users/Login");
             }
 
-            string albumId = (string)httpRequest.QueryData["albumId"];
+            string albumId = (string)this.Request.QueryData["albumId"];
 
             using (var context = new RunesDbContext())
             {
@@ -46,9 +46,9 @@
                     return this.Redirect("/Albums/All");
                 }
 
-                string name = ((ISet<string>)httpRequest.FormData["name"]).FirstOrDefault();
-                string link = ((ISet<string>)httpRequest.FormData["link"]).FirstOrDefault();
-                string price = ((ISet<string>)httpRequest.FormData["price"]).FirstOrDefault();
+                string name = ((ISet<string>)this.Request.FormData["name"]).FirstOrDefault();
+                string link = ((ISet<string>)this.Request.FormData["link"]).FirstOrDefault();
+                string price = ((ISet<string>)this.Request.FormData["price"]).FirstOrDefault();
 
                 Track track = new Track()
                 {
@@ -69,15 +69,15 @@
             return this.Redirect($"/Albums/Details?id={albumId}");
         }
 
-        public IHttpResponse Details(IHttpRequest httpRequest)
+        public IHttpResponse Details()
         {
-            if (!this.IsLoggedIn(httpRequest))
+            if (!this.IsLoggedIn())
             {
                 return this.Redirect("/Users/Login");
             }
 
-            string trackId = (string)httpRequest.QueryData["trackId"];
-            string albumId = (string)httpRequest.QueryData["albumId"];
+            string trackId = (string)this.Request.QueryData["trackId"];
+            string albumId = (string)this.Request.QueryData["albumId"];
 
             using (var context = new RunesDbContext())
             {

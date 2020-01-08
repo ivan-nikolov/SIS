@@ -1,15 +1,11 @@
 ﻿namespace SIS.MvcFramework
 {
-    using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Runtime.CompilerServices;
-    using System.Text;
-    using System.Xml.Serialization;
     using SIS.HTTP.Enums;
     using SIS.HTTP.Requests;
-    using SIS.HTTP.Responses;
     using SIS.MvcFramework.Extensions;
+    using SIS.MvcFramework.Identity;
     using SIS.MvcFramework.Results;
 
     public abstract class Controller
@@ -20,6 +16,10 @@
         {
             this.ViewData = new Dictionary<string, object>();
         }
+
+        protected Principal User => this.Request.Session.GetParameter("principal") as Principal;
+
+        public IHttpRequest Request { get; set; }
 
         protected ActionResult View([CallerMemberName] string view = null)
         {
@@ -35,21 +35,24 @@
             return htmlResult;
         }
 
-        protected void SignIn(IHttpRequest httpRequest, string id, string username, string email)
+        protected void SignIn(string id, string username, string email)
         {
-            httpRequest.Session.AddParameter("id", id);
-            httpRequest.Session.AddParameter("username", username);
-            httpRequest.Session.AddParameter("email", email);
+            this.Request.Session.AddParameter("principal", new Principal
+            {
+                Id = id,
+                Username = username,
+                Email = email
+            });
         }
 
-        protected void SignOut(IHttpRequest httpRequest)
+        protected void SignOut()
         {
-            httpRequest.Session.ClearParameters();
+            this.Request.Session.ClearParameters();
         }
 
-        protected bool IsLoggedIn(IHttpRequest httpRequest)
+        protected bool IsLoggedIn()
         {
-            return httpRequest.Session.ContainsParameter("username");
+            return this.User != null;
         }
 
         private string ParseTemplate(string viewContent)
@@ -80,6 +83,11 @@
         protected ActionResult File(byte[] content)
         {
             return new FileResult(content);
+        }
+
+        protected ActionResult NotFound(string message = "")
+        {
+            return new NotFoundResult(message);
         }
     }
 }

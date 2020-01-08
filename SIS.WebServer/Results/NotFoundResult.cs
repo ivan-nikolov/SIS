@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SIS.MvcFramework.Results
+﻿namespace SIS.MvcFramework.Results
 {
-    class NotFound
+    using System.Text;
+    using SIS.HTTP.Enums;
+
+    public class NotFoundResult : ActionResult
     {
+        public NotFoundResult(string message, HttpResponseStatusCode statusCode = HttpResponseStatusCode.NotFound) 
+            : base(statusCode)
+        {
+            this.Content = Encoding.UTF8.GetBytes(message);
+        }
     }
 }

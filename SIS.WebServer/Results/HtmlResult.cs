@@ -11,7 +11,7 @@
         private const string DefaultContentType = "text/html; charset=UTF-8";
         private const string HttpHeaderKey = "Content-Type";
 
-        public HtmlResult(string content, HttpResponseStatusCode responseStatusCode)
+        public HtmlResult(string content, HttpResponseStatusCode responseStatusCode = HttpResponseStatusCode.Ok)
             : base(responseStatusCode)
         {
             this.Headers.AddHeader(new HttpHeader(HttpHeaderKey, DefaultContentType));
