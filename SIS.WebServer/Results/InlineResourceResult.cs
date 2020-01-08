@@ -4,7 +4,7 @@
     using SIS.HTTP.Headers;
     using SIS.HTTP.Responses;
 
-    public class InlineResourceResult : HttpResponse
+    public class InlineResourceResult : ActionResult
     {
         private const string DefaultContentDisposition = "inline";
 

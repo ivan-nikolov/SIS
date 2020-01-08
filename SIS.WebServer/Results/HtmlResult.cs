@@ -6,7 +6,7 @@
     using HTTP.Headers;
     using HTTP.Responses;
 
-    public class HtmlResult : HttpResponse
+    public class HtmlResult : ActionResult
     {
         private const string DefaultContentType = "text/html; charset=UTF-8";
         private const string HttpHeaderKey = "Content-Type";

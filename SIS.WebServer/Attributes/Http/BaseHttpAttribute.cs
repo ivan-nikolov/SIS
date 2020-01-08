@@ -1,4 +1,4 @@
-﻿namespace SIS.MvcFramework.Attributes
+﻿namespace SIS.MvcFramework.Attributes.Http
 {
     using System;
     using SIS.HTTP.Enums;
@@ -9,6 +9,6 @@
 
         public string Url { get; set; }
 
-        public abstract HttpRequestMethod Method { get;}
+        public abstract HttpRequestMethod Method { get; }
     }
 }

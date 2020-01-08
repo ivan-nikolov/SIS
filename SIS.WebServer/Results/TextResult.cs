@@ -5,7 +5,7 @@
     using SIS.HTTP.Headers;
     using SIS.HTTP.Responses;
 
-    public class TextResult : HttpResponse
+    public class TextResult : ActionResult
     {
         private const string DefaultContentType = "text/plain; charset=utf-8";
         private const string HttpHeaderKey = "Content-Type";

@@ -8,6 +8,7 @@
         public const string Host = "Host";
         public const string ContentLength = "Content-Length";
         public const string ContentDisposition = "Content-Disposition";
+        public const string ContentType = "ContentType";
 
         public HttpHeader(string key, string value)
         {

@@ -1,4 +1,4 @@
-﻿namespace SIS.MvcFramework.Attributes
+﻿namespace SIS.MvcFramework.Attributes.Http
 {
     using SIS.HTTP.Enums;
 

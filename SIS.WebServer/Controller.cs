@@ -1,11 +1,15 @@
 ﻿namespace SIS.MvcFramework
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.CompilerServices;
+    using System.Text;
+    using System.Xml.Serialization;
     using SIS.HTTP.Enums;
     using SIS.HTTP.Requests;
     using SIS.HTTP.Responses;
+    using SIS.MvcFramework.Extensions;
     using SIS.MvcFramework.Results;
 
     public abstract class Controller
@@ -17,12 +21,12 @@
             this.ViewData = new Dictionary<string, object>();
         }
 
-        protected IHttpResponse View([CallerMemberName] string view = null)
+        protected ActionResult View([CallerMemberName] string view = null)
         {
             string controllerName = this.GetType().Name.Replace("Controller", string.Empty);
             string viewName = view;
 
-            string viewContent = File.ReadAllText("Views/" + controllerName + "/" + viewName + ".html");
+            string viewContent = System.IO.File.ReadAllText("Views/" + controllerName + "/" + viewName + ".html");
 
             viewContent = this.ParseTemplate(viewContent);
 
@@ -58,9 +62,24 @@
             return viewContent;
         }
 
-        protected IHttpResponse Redirect(string url)
+        protected ActionResult Redirect(string url)
         {
             return new RedirectResult(url);
+        }
+
+        protected ActionResult Xml(object param)
+        {
+            return new XmlResult(param.ToXml());
+        }
+
+        protected ActionResult Json(object param)
+        {
+            return new JsonResult(param.ToJson());
+        }
+
+        protected ActionResult File(byte[] content)
+        {
+            return new FileResult(content);
         }
     }
 }
