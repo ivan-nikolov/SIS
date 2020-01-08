@@ -7,6 +7,7 @@
     using System.Text;
     using IRunes.Data;
     using IRunes.Models;
+    using IRunes.Services;
     using SIS.MvcFramework;
     using SIS.MvcFramework.Attributes.Action;
     using SIS.MvcFramework.Attributes.Http;
@@ -14,6 +15,13 @@
 
     public class UsersController : Controller
     {
+        private readonly IUserService userService;
+
+        public UsersController()
+        {
+            this.userService = new UserService();
+        }
+
         public ActionResult Login()
         {
             return this.View();
@@ -22,24 +30,18 @@
         [HttpPost(ActionName = "Login")]
         public ActionResult LoginConfirm()
         {
-            using (var context = new RunesDbContext())
+            string username = ((ISet<string>)this.Request.FormData["username"]).FirstOrDefault();
+
+            string password = ((ISet<string>)this.Request.FormData["password"]).FirstOrDefault();
+
+            User user = this.userService.GetUserByUsernameAndPassword(username, this.HashPassword(password));
+
+            if (user == null)
             {
-                string username = ((ISet<string>)this.Request.FormData["username"]).FirstOrDefault();
-                                                 
-                string password = ((ISet<string>)this.Request.FormData["password"]).FirstOrDefault();
-
-                User user = context.Users
-                    .SingleOrDefault(u => (u.Username == username || u.Email == username)
-                    && u.Password == this.HashPassword(password));
-
-                if (user == null)
-                {
-                    return this.Redirect("/Users/Login");
-                }
-
-                this.SignIn(user.Id, user.Username, user.Email);
+                return this.Redirect("/Users/Login");
             }
 
+            this.SignIn(user.Id, user.Username, user.Email);
 
             return this.Redirect("/");
         }
@@ -64,17 +66,13 @@
 
             User user = new User()
             {
-                Id =  Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid().ToString(),
                 Username = username,
                 Password = this.HashPassword(password),
                 Email = email
             };
 
-            using (var context = new RunesDbContext())
-            {
-                context.Users.Add(user);
-                context.SaveChanges();
-            }
+            this.userService.CreateUser(user);
 
             return this.Redirect("/Users/Login");
         }

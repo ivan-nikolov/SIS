@@ -6,6 +6,7 @@
     using IRunes.App.Extensions;
     using IRunes.Data;
     using IRunes.Models;
+    using IRunes.Services;
     using Microsoft.EntityFrameworkCore;
     using SIS.MvcFramework;
     using SIS.MvcFramework.Attributes.Http;
@@ -14,22 +15,26 @@
 
     public class AlbumsController : Controller
     {
+        private IAlbumService albumService;
+
+        public AlbumsController()
+        {
+            this.albumService = new AlbumService();
+        }
+
         [Authorize]
         public ActionResult All()
         {
-            using (var context = new RunesDbContext())
-            {
-                ICollection<Album> allAlbums = context.Albums.ToList();
+            ICollection<Album> allAlbums = albumService.GetAllAlbums();
 
-                if (allAlbums.Count == 0)
-                {
-                    this.ViewData["Albums"] = "There are currently no albums.";
-                }
-                else
-                {
-                    this.ViewData["Albums"] =
-                        string.Join(string.Empty, allAlbums.Select(album => album.ToHtmlAll()).ToList());
-                }
+            if (allAlbums.Count == 0)
+            {
+                this.ViewData["Albums"] = "There are currently no albums.";
+            }
+            else
+            {
+                this.ViewData["Albums"] =
+                    string.Join(string.Empty, allAlbums.Select(album => album.ToHtmlAll()).ToList());
             }
 
             return this.View();
@@ -56,11 +61,7 @@
                 Price = 0
             };
 
-            using (var context = new RunesDbContext())
-            {
-                context.Albums.Add(album);
-                context.SaveChanges();
-            }
+            this.albumService.CreateAlbum(album);
 
             return this.Redirect("/Albums/All");
         }
@@ -70,19 +71,16 @@
         {
             string albumId = (string)this.Request.QueryData["id"];
 
-            using (var context = new RunesDbContext())
+
+            Album album = albumService.GetAlbumById(albumId);
+
+            if (album == null)
             {
-                Album album = context.Albums
-                    .Include(a => a.Tracks)
-                    .SingleOrDefault(a => a.Id == albumId);
-
-                if (album == null)
-                {
-                    return this.Redirect("/Albums/All");
-                }
-
-                this.ViewData["Album"] = album.ToHtmlDetails();
+                return this.Redirect("/Albums/All");
             }
+
+            this.ViewData["Album"] = album.ToHtmlDetails();
+
 
             return this.View();
         }

@@ -77,7 +77,7 @@
                             .LastOrDefault(a => a.GetType() == typeof(AuthorizeAttribute)) as AuthorizeAttribute;
                         if (authorizeAttribute != null &&
                         (controllerPrincipal == null
-                            && !authorizeAttribute.IsInAuthority(controllerPrincipal)))
+                            || !authorizeAttribute.IsInAuthority(controllerPrincipal)))
                         {
                             return new HttpResponse(HttpResponseStatusCode.Forbidden); //TODO Redirect to configured URL
                         }
