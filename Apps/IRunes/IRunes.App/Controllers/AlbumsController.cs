@@ -4,10 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using IRunes.App.Extensions;
-    using IRunes.Data;
     using IRunes.Models;
     using IRunes.Services;
-    using Microsoft.EntityFrameworkCore;
     using SIS.MvcFramework;
     using SIS.MvcFramework.Attributes.Http;
     using SIS.MvcFramework.Attributes.Security;
