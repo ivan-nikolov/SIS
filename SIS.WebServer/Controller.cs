@@ -29,10 +29,14 @@
             string viewName = view;
 
             string viewContent = System.IO.File.ReadAllText("Views/" + controllerName + "/" + viewName + ".html");
-
             viewContent = this.ParseTemplate(viewContent);
 
-            HtmlResult htmlResult = new HtmlResult(viewContent, HttpResponseStatusCode.Ok);
+            string layoutContent = System.IO.File.ReadAllText("Views/_Layout.html");
+            layoutContent = this.ParseTemplate(layoutContent);
+
+            layoutContent = layoutContent.Replace("@RenderBody()", viewContent);
+
+            HtmlResult htmlResult = new HtmlResult(layoutContent, HttpResponseStatusCode.Ok);
 
             return htmlResult;
         }
@@ -55,16 +59,6 @@
         protected bool IsLoggedIn()
         {
             return this.Request.Session.ContainsParameter("principal");
-        }
-
-        private string ParseTemplate(string viewContent)
-        {
-            foreach (var kvp in this.ViewData)
-            {
-                viewContent = viewContent.Replace($"@Model.{kvp.Key}", kvp.Value.ToString());
-            }
-
-            return viewContent;
         }
 
         protected ActionResult Redirect(string url)
@@ -90,6 +84,16 @@
         protected ActionResult NotFound(string message = "")
         {
             return new NotFoundResult(message);
+        }
+
+        private string ParseTemplate(string viewContent)
+        {
+            foreach (var kvp in this.ViewData)
+            {
+                viewContent = viewContent.Replace($"@Model.{kvp.Key}", kvp.Value.ToString());
+            }
+
+            return viewContent;
         }
     }
 }
