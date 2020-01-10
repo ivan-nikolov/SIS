@@ -1,10 +1,10 @@
-﻿namespace SIS.HTTP.Common
-{
-    using System;
+﻿using System;
 
-    public class CoreValidator
+namespace SIS.Common
+{
+    public static class ValidationExtensions
     {
-        public static void ThrowIfNull(object obj, string name)
+        public static void ThrowIfNull(this object obj, string name)
         {
             if (obj == null)
             {
@@ -12,7 +12,7 @@
             }
         }
 
-        public static void ThrowIfNullOrEmpty(string text, string name)
+        public static void ThrowIfNullOrEmpty(this string text, string name)
         {
             if (string.IsNullOrEmpty(text))
             {

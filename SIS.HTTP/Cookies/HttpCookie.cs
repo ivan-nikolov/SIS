@@ -2,7 +2,7 @@
 {
     using System;
     using System.Text;
-    using SIS.HTTP.Common;
+    using SIS.Common;
 
     public class HttpCookie
     {
@@ -16,8 +16,8 @@
 
         public HttpCookie(string key, string value, bool isNew, int expires = DefaultExpirationDays, string path = DefaultPath)
         {
-            CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
-            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+            key.ThrowIfNullOrEmpty(nameof(key));
+            value.ThrowIfNullOrEmpty(nameof(value));
 
             this.Key = key;
             this.Value = value;

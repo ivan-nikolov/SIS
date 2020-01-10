@@ -17,6 +17,7 @@
     using Extensions;
 
     using Headers;
+    using SIS.Common;
     using SIS.HTTP.Sessions;
 
     public class HttpRequest : IHttpRequest
@@ -25,7 +26,7 @@
 
         public HttpRequest(string requestString)
         {
-            CoreValidator.ThrowIfNullOrEmpty(requestString, nameof(requestString));
+            requestString.ThrowIfNullOrEmpty(nameof(requestString));
 
             this.FormData = new Dictionary<string, object>();
             this.QueryData = new Dictionary<string, object>();

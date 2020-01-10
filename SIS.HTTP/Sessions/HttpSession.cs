@@ -1,7 +1,7 @@
 ﻿namespace SIS.HTTP.Sessions
 {
     using System.Collections.Generic;
-    using SIS.HTTP.Common;
+    using SIS.Common;
 
     public class HttpSession : IHttpSession
     {
@@ -10,16 +10,18 @@
         public HttpSession(string id)
         {
             this.sessionParameters = new Dictionary<string, object>();
-
+            this.IsNew = true;
             this.Id = id;
         }
 
         public string Id { get; }
 
+        public bool IsNew { get; set; }
+
         public void AddParameter(string name, object parameter)
         {
-            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
-            CoreValidator.ThrowIfNull(parameter, nameof(parameter));
+            name.ThrowIfNullOrEmpty(nameof(name));
+            parameter.ThrowIfNull(nameof(parameter));
 
             this.sessionParameters[name]  = parameter;
         }
@@ -31,14 +33,14 @@
 
         public bool ContainsParameter(string name)
         {
-            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
+            name.ThrowIfNullOrEmpty(nameof(name));
 
             return this.sessionParameters.ContainsKey(name);
         }
 
         public object GetParameter(string name)
         {
-            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
+            name.ThrowIfNullOrEmpty(nameof(name));
 
             object parameter = null;
 

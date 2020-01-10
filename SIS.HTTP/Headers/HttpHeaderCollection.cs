@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Common;
+    using SIS.Common;
 
     public class HttpHeaderCollection : IHttpHeaderCollection
     {
@@ -17,21 +17,21 @@
 
         public void AddHeader(HttpHeader header)
         {
-            CoreValidator.ThrowIfNull(header, nameof(HttpHeader));
+            header.ThrowIfNull(nameof(HttpHeader));
 
             this.headers[header.Key] = header;
         }
 
         public bool ContainsHeader(string key)
         {
-            CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
+            key.ThrowIfNullOrEmpty(nameof(key));
 
             return this.headers.ContainsKey(key);
         }
 
         public HttpHeader GetHeader(string key)
         {
-            CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
+            key.ThrowIfNullOrEmpty(nameof(key));
 
             HttpHeader header = null;
 

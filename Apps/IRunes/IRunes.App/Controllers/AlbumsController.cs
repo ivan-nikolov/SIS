@@ -4,11 +4,13 @@
     using System.Collections.Generic;
     using System.Linq;
     using IRunes.App.Extensions;
+    using IRunes.App.ViewModels;
     using IRunes.Models;
     using IRunes.Services;
     using SIS.MvcFramework;
     using SIS.MvcFramework.Attributes.Http;
     using SIS.MvcFramework.Attributes.Security;
+    using SIS.MvcFramework.Mapping;
     using SIS.MvcFramework.Results;
 
     public class AlbumsController : Controller
@@ -25,14 +27,9 @@
         {
             ICollection<Album> allAlbums = albumService.GetAllAlbums();
 
-            if (allAlbums.Count == 0)
+            if (allAlbums.Count != 0)
             {
-                this.ViewData["Albums"] = "There are currently no albums.";
-            }
-            else
-            {
-                this.ViewData["Albums"] =
-                    string.Join(string.Empty, allAlbums.Select(album => album.ToHtmlAll()).ToList());
+                return this.View(allAlbums.Select(ModelMapper.ProjectTo<AlbumAllViewModel>).ToList());
             }
 
             return this.View();
@@ -70,17 +67,18 @@
             string albumId = (string)this.Request.QueryData["id"];
 
 
-            Album album = albumService.GetAlbumById(albumId);
+            Album albumFromDb = albumService
+                .GetAlbumById(albumId);
 
-            if (album == null)
+            if (albumFromDb == null)
             {
                 return this.Redirect("/Albums/All");
             }
 
-            this.ViewData["Album"] = album.ToHtmlDetails();
+            AlbumDetailslViewModel album = ModelMapper.ProjectTo<AlbumDetailslViewModel>(albumFromDb);
 
 
-            return this.View();
+            return this.View(album);
         }
     }
 }

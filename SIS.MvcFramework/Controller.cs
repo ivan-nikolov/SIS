@@ -11,13 +11,10 @@
 
     public abstract class Controller
     {
-        private IViewEngine viewEngine;
-
-        protected Dictionary<string, object> ViewData;
+        private readonly IViewEngine viewEngine;
 
         protected Controller()
         {
-            this.ViewData = new Dictionary<string, object>();
             this.viewEngine = new SisViewEngine();
         }
 
@@ -39,10 +36,10 @@
             string viewName = view;
 
             string viewContent = System.IO.File.ReadAllText("Views/" + controllerName + "/" + viewName + ".html");
-            viewContent = this.viewEngine.GetHtml(viewContent, model);
+            viewContent = this.viewEngine.GetHtml(viewContent, model, this.User);
 
             string layoutContent = System.IO.File.ReadAllText("Views/_Layout.html");
-            layoutContent = this.viewEngine.GetHtml(layoutContent, model);
+            layoutContent = this.viewEngine.GetHtml(layoutContent, model, this.User);
 
             layoutContent = layoutContent.Replace("@RenderBody()", viewContent);
 

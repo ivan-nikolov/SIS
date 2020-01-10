@@ -4,7 +4,7 @@
     using Enums;
 
     using Headers;
-
+    using SIS.Common;
     using SIS.HTTP.Common;
     using SIS.HTTP.Cookies;
     using SIS.HTTP.Extensions;
@@ -22,7 +22,7 @@
         public HttpResponse(HttpResponseStatusCode statusCode)
             : this()
         {
-            CoreValidator.ThrowIfNull(statusCode, nameof(statusCode));
+            statusCode.ThrowIfNull(nameof(statusCode));
             this.StatusCode = statusCode;
         }
 
@@ -36,13 +36,13 @@
 
         public void AddHeader(HttpHeader header)
         {
-            CoreValidator.ThrowIfNull(header, nameof(header));
+            header.ThrowIfNull(nameof(header));
             this.Headers.AddHeader(header);
         }
 
         public void AddCookie(HttpCookie cookie)
         {
-            CoreValidator.ThrowIfNull(cookie, nameof(cookie));
+            cookie.ThrowIfNull(nameof(cookie));
 
             this.Cookies.AddCookie(cookie);
         }

@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using SIS.HTTP.Common;
+    using SIS.Common;
     using SIS.HTTP.Enums;
     using SIS.HTTP.Requests;
     using SIS.HTTP.Responses;
@@ -24,25 +24,25 @@
 
         public void Add(HttpRequestMethod method, string path, Func<IHttpRequest, IHttpResponse> func)
         {
-            CoreValidator.ThrowIfNull(method, nameof(method));
-            CoreValidator.ThrowIfNullOrEmpty(path, nameof(path));
-            CoreValidator.ThrowIfNull(func, nameof(func));
+            method.ThrowIfNull(nameof(method));
+            path.ThrowIfNullOrEmpty(nameof(path));
+            func.ThrowIfNull(nameof(func));
 
             this.routs[method].Add(path, func);
         }
 
         public bool Contains(HttpRequestMethod method, string path)
         {
-            CoreValidator.ThrowIfNull(method, nameof(method));
-            CoreValidator.ThrowIfNullOrEmpty(path, nameof(path));
+            method.ThrowIfNull(nameof(method));
+            path.ThrowIfNullOrEmpty(nameof(path));
 
             return this.routs.ContainsKey(method) && this.routs[method].ContainsKey(path);
         }
 
         public Func<IHttpRequest, IHttpResponse> Get(HttpRequestMethod method, string path)
         {
-            CoreValidator.ThrowIfNull(method, nameof(method));
-            CoreValidator.ThrowIfNullOrEmpty(path, nameof(path));
+            method.ThrowIfNull(nameof(method));
+            path.ThrowIfNullOrEmpty(nameof(path));
 
             return this.routs[method][path];
         }
