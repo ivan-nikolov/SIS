@@ -1,5 +1,6 @@
 ﻿namespace IRunes.App.Controllers
 {
+    using System.Collections.Generic;
     using IRunes.App.ViewModels;
     using SIS.MvcFramework;
     using SIS.MvcFramework.Attributes.Http;
@@ -23,7 +24,7 @@
             return this.View();
         }
 
-        public ActionResult Test()
+        public ActionResult Test(IEnumerable<int> list)
         {
             return this.View();
         }

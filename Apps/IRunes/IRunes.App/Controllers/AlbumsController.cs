@@ -41,8 +41,8 @@
         }
 
         [Authorize]
-        [HttpPost(ActionName = "Create")]
-        public ActionResult CreateConfirm(string name, string cover)
+        [HttpPost]
+        public ActionResult Create(string name, string cover)
         {
             Album album = new Album
             {

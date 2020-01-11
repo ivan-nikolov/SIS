@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 namespace SIS.MvcFramework.ViewEngine
 {
+    using System.Net;
     using SIS.MvcFramework.Identity;
 
     public class SisViewEngine : IViewEngine
@@ -78,12 +79,17 @@ namespace AppViewCodeNamespace
 
             if (!compilationResult.Success)
             {
-                foreach (var error in compilationResult.Diagnostics)
+                var errors = compilationResult.Diagnostics.Where(x => x.Severity == DiagnosticSeverity.Error);
+                var htmlErrors = new StringBuilder();
+
+                htmlErrors.AppendLine($"<h1>{errors.Count()} errors:</h1>");
+                foreach (var error in errors)
                 {
-                    Console.WriteLine(error.GetMessage());
+                    htmlErrors.AppendLine($"<div>({error.Location}) => {error.GetMessage()}</div>");
                 }
 
-                return null;
+                htmlErrors.AppendLine($"<pre>{WebUtility.HtmlEncode(code)}</pre>");
+                return new ErrorView(htmlErrors.ToString());
             }
 
             memoryStream.Seek(0, SeekOrigin.Begin);

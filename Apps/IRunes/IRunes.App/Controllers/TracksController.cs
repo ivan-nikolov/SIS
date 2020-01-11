@@ -28,20 +28,20 @@
         }
 
         [Authorize]
-        [HttpPost(ActionName = "Create")]
-        public ActionResult CreateConfirm(string albumId,string name, string link, decimal price)
+        [HttpPost]
+        public ActionResult Create(CreateTrackInputModel model)
         {
             Track track = new Track()
             {
                 Id = Guid.NewGuid().ToString(),
-                Name = name,
-                Link = link,
-                Price = price
+                Name = model.Name,
+                Link = model.Link,
+                Price = model.Price
             };
 
-            if (!this.albumService.AddTrackToAlbum(albumId, track))
+            if (!this.albumService.AddTrackToAlbum(model.AlbumId, track))
             {
-                return this.Redirect($"/Albums/Details?id={albumId}");
+                return this.Redirect($"/Albums/Details?id={model.AlbumId}");
             }
 
             return this.Redirect("/Albums/All");
