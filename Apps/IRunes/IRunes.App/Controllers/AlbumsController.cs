@@ -63,7 +63,7 @@
         [Authorize]
         public ActionResult Details()
         {
-            string albumId = (string)this.Request.QueryData["id"];
+            string albumId = this.Request.QueryData["id"].FirstOrDefault();
 
 
             Album albumFromDb = albumService

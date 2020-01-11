@@ -28,8 +28,8 @@
         {
             requestString.ThrowIfNullOrEmpty(nameof(requestString));
 
-            this.FormData = new Dictionary<string, object>();
-            this.QueryData = new Dictionary<string, object>();
+            this.FormData = new Dictionary<string, ISet<string>>();
+            this.QueryData = new Dictionary<string, ISet<string>>();
             this.Headers = new HttpHeaderCollection();
             this.Cookies = new HttpCookieCollection();
 
@@ -40,9 +40,9 @@
 
         public string Url { get; private set; }
 
-        public Dictionary<string, object> FormData { get; }
+        public Dictionary<string, ISet<string>> FormData { get; }
 
-        public Dictionary<string, object> QueryData { get; }
+        public Dictionary<string, ISet<string>> QueryData { get; }
 
         public IHttpHeaderCollection Headers { get; }
 
@@ -167,7 +167,12 @@
                     {
                         string[] keyValueArguments = this.SplitQueryParameter(queryParameterKeyValuePair);
 
-                        this.QueryData.Add(keyValueArguments[0], keyValueArguments[1]);
+                        if (!this.QueryData.ContainsKey(keyValueArguments[0]))
+                        {
+                            this.QueryData[keyValueArguments[0]] = new HashSet<string>();
+                        }
+
+                        this.QueryData[keyValueArguments[0]].Add(keyValueArguments[1]);
                     }
                 }
             }
@@ -193,7 +198,7 @@
                         this.FormData.Add(key, new HashSet<string>());
                     }
 
-                    ((ISet<string>)this.FormData[key]).Add(value);
+                    this.FormData[key].Add(value);
                 }
             }
         }

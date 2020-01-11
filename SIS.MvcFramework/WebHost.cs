@@ -1,8 +1,10 @@
 ﻿namespace SIS.MvcFramework
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using SIS.HTTP.Enums;
+    using SIS.HTTP.Requests;
     using SIS.HTTP.Responses;
     using SIS.MvcFramework.Attributes.Action;
     using SIS.MvcFramework.Attributes.Http;
@@ -51,7 +53,7 @@
 
                 foreach (var action in actions)
                 {
-                    var attribute = action.GetCustomAttributes() 
+                    var attribute = action.GetCustomAttributes()
                         .Where(x => x.GetType().IsSubclassOf(typeof(BaseHttpAttribute))).LastOrDefault() as BaseHttpAttribute;
 
                     var path = $"/{controllerType.Name.Replace("Controller", string.Empty)}/{action.Name}";
@@ -72,29 +74,52 @@
                         path = $"/{controllerType.Name.Replace("Controller", string.Empty)}/{attribute.ActionName}";
                     }
 
-                    serverRoutingTable.Add(httpMethod, path, request => 
-                    {
-                        var controllerInstance = serviceProvider.CreateInstance(controllerType) as Controller;
-                        controllerInstance.Request = request;
-
-                        var controllerPrincipal = controllerInstance.User;
-                        var authorizeAttribute = action.GetCustomAttributes()
-                            .LastOrDefault(a => a.GetType() == typeof(AuthorizeAttribute)) as AuthorizeAttribute;
-                        if (authorizeAttribute != null &&
-                        (controllerPrincipal == null
-                            || !authorizeAttribute.IsInAuthority(controllerPrincipal)))
-                        {
-                            return new HttpResponse(HttpResponseStatusCode.Forbidden); //TODO Redirect to configured URL
-                        }
-
-
-                        var response = action.Invoke(controllerInstance, new object[] {}) as ActionResult;
-                        return response;
-                    });
+                    serverRoutingTable.Add(httpMethod, path, request =>  ProcessRequest(serviceProvider, controllerType, action, request));
 
                     System.Console.WriteLine(httpMethod + " " + path);
                 }
             }
+        }
+
+        private static IHttpResponse ProcessRequest(
+            IServiceProvider serviceProvider,
+            System.Type controllerType,
+            MethodInfo action,
+            IHttpRequest request)
+        {
+            var controllerInstance = serviceProvider.CreateInstance(controllerType) as Controller;
+            controllerInstance.Request = request;
+
+            var controllerPrincipal = controllerInstance.User;
+            var authorizeAttribute = action.GetCustomAttributes()
+                .LastOrDefault(a => a.GetType() == typeof(AuthorizeAttribute)) as AuthorizeAttribute;
+            if (authorizeAttribute != null &&
+            (controllerPrincipal == null
+                || !authorizeAttribute.IsInAuthority(controllerPrincipal)))
+            {
+                return new HttpResponse(HttpResponseStatusCode.Forbidden); //TODO Redirect to configured URL
+            }
+
+            var actionParameters = action.GetParameters();
+            var parameterValues = new List<object>();
+
+            foreach (var parameter in actionParameters)
+            {
+                var parameterName = parameter.Name.ToLower();
+                object parameterValue = null;
+                if (request.QueryData.Any(x => x.Key.ToLower() == parameterName))
+                {
+                    parameterValue = request.QueryData.FirstOrDefault(x => x.Key.ToLower() == parameterName);
+                }
+
+                if (request.FormData.Any(x => x.Key.ToLower() == parameterName))
+                {
+                    parameterValue = request.FormData.FirstOrDefault(x => x.Key.ToLower() == parameterName);
+                }
+            }
+
+            var response = action.Invoke(controllerInstance, parameterValues.ToArray()) as ActionResult;
+            return response;
         }
     }
 }

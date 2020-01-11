@@ -1,7 +1,6 @@
 ﻿namespace IRunes.App.Controllers
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using IRunes.App.ViewModels;
     using IRunes.Models;
@@ -26,7 +25,7 @@
         [Authorize]
         public ActionResult Create()
         {
-            string albumId = (string)this.Request.QueryData["albumId"];
+            string albumId = this.Request.QueryData["albumId"].FirstOrDefault();
 
             return this.View(new TrackCreateViewModel() { AlbumId = albumId});
         }
@@ -35,11 +34,11 @@
         [HttpPost(ActionName = "Create")]
         public ActionResult CreateConfirm()
         {
-            string albumId = (string)this.Request.QueryData["albumId"];
+            string albumId = this.Request.QueryData["albumId"].FirstOrDefault();
 
-            string name = ((ISet<string>)this.Request.FormData["name"]).FirstOrDefault();
-            string link = ((ISet<string>)this.Request.FormData["link"]).FirstOrDefault();
-            string price = ((ISet<string>)this.Request.FormData["price"]).FirstOrDefault();
+            string name = this.Request.FormData["name"].FirstOrDefault();
+            string link = this.Request.FormData["link"].FirstOrDefault();
+            string price = this.Request.FormData["price"].FirstOrDefault();
 
             Track track = new Track()
             {
@@ -60,8 +59,8 @@
         [Authorize]
         public ActionResult Details()
         {
-            string trackId = (string)this.Request.QueryData["trackId"];
-            string albumId = (string)this.Request.QueryData["albumId"];
+            string trackId = this.Request.QueryData["trackId"].FirstOrDefault();
+            string albumId = this.Request.QueryData["albumId"].FirstOrDefault();
 
 
             Track track = this.trackService.GetTrackById(trackId);
@@ -70,9 +69,6 @@
             {
                 return this.Redirect($"/Albums/Details?id={albumId}");
             }
-
-            //this.ViewData["Track"] = track.ToHtmlDetails(albumId);
-            //this.ViewData["AlbumId"] = albumId;
 
             var trackViewModel = ModelMapper.ProjectTo<TrackDetailsViewModel>(track);
             trackViewModel.AlbumId = albumId;
