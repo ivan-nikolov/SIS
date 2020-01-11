@@ -111,7 +111,7 @@ namespace AppViewCodeNamespace
 
         private string GetSharpCode(string viewContent)
         {
-            var lines = viewContent.Split(new char[] { '\n', '\r'});
+            var lines = viewContent.Split(new string[] { "\n\r", "\r\n", "\n"}, StringSplitOptions.None);
             var cSharpCode = new StringBuilder();
             var supportedOperators = new[] { "for", "if", "else" };
             foreach (var line in lines)
@@ -129,11 +129,7 @@ namespace AppViewCodeNamespace
                 }
                 else
                 {
-                    if (!line.Contains("@"))
-                    {
-                        cSharpCode.AppendLine($"html.AppendLine(@\"{line.Replace("\"", "\"\"")}\");");
-                    }
-                    else if (line.Contains("@RenderBody()"))
+                    if (line.Contains("@RenderBody()"))
                     {
                         var cSharpLine = $"html.AppendLine(@\"{line.Replace("\"", "\"\"")}\");";
                         cSharpCode.AppendLine(cSharpLine);
