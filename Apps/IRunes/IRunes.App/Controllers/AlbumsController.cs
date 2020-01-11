@@ -42,11 +42,8 @@
 
         [Authorize]
         [HttpPost(ActionName = "Create")]
-        public ActionResult CreateConfirm()
+        public ActionResult CreateConfirm(string name, string cover)
         {
-            string name = ((ISet<string>)this.Request.FormData["name"]).FirstOrDefault();
-            string cover = ((ISet<string>)this.Request.FormData["cover"]).FirstOrDefault();
-
             Album album = new Album
             {
                 Id = Guid.NewGuid().ToString(),
@@ -61,13 +58,10 @@
         }
 
         [Authorize]
-        public ActionResult Details()
+        public ActionResult Details(string id)
         {
-            string albumId = this.Request.QueryData["id"].FirstOrDefault();
-
-
             Album albumFromDb = albumService
-                .GetAlbumById(albumId);
+                .GetAlbumById(id);
 
             if (albumFromDb == null)
             {
@@ -75,7 +69,6 @@
             }
 
             AlbumDetailslViewModel album = ModelMapper.ProjectTo<AlbumDetailslViewModel>(albumFromDb);
-
 
             return this.View(album);
         }

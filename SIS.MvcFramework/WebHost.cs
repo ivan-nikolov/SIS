@@ -106,16 +106,24 @@
             foreach (var parameter in actionParameters)
             {
                 var parameterName = parameter.Name.ToLower();
-                object parameterValue = null;
+                ISet<string> httpDataValue = null;
                 if (request.QueryData.Any(x => x.Key.ToLower() == parameterName))
                 {
-                    parameterValue = request.QueryData.FirstOrDefault(x => x.Key.ToLower() == parameterName);
+                    httpDataValue = request.QueryData
+                        .FirstOrDefault(x => x.Key.ToLower() == parameterName)
+                        .Value;
+                }
+                else if (request.FormData.Any(x => x.Key.ToLower() == parameterName))
+                {
+                    httpDataValue = request.FormData
+                        .FirstOrDefault(x => x.Key.ToLower() == parameterName)
+                        .Value;
                 }
 
-                if (request.FormData.Any(x => x.Key.ToLower() == parameterName))
-                {
-                    parameterValue = request.FormData.FirstOrDefault(x => x.Key.ToLower() == parameterName);
-                }
+                //TODO: Support lists
+                var httpStringValue = httpDataValue.FirstOrDefault();
+                var parameterValue = System.Convert.ChangeType(httpStringValue, parameter.ParameterType);
+                parameterValues.Add(parameterValue);
             }
 
             var response = action.Invoke(controllerInstance, parameterValues.ToArray()) as ActionResult;

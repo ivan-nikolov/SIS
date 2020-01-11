@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Text.RegularExpressions;
 
     using Common;
@@ -172,7 +173,7 @@
                             this.QueryData[keyValueArguments[0]] = new HashSet<string>();
                         }
 
-                        this.QueryData[keyValueArguments[0]].Add(keyValueArguments[1]);
+                        this.QueryData[keyValueArguments[0]].Add(WebUtility.UrlDecode(keyValueArguments[1]));
                     }
                 }
             }
@@ -198,7 +199,7 @@
                         this.FormData.Add(key, new HashSet<string>());
                     }
 
-                    this.FormData[key].Add(value);
+                    this.FormData[key].Add(WebUtility.UrlDecode(value));
                 }
             }
         }

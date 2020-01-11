@@ -23,8 +23,8 @@
 <main>
     <div class="album-details d-flex justify-content-between row">
         <div class="album-data col-md-5">
-            <img src="@{WebUtility.UrlDecode(Model.Cover)}" class="img-thumbnail" />
-            <h1 class="text-center">Album Name: @{WebUtility.UrlDecode(Model.Name)}</h1>
+            <img src="@Model.Cover" class="img-thumbnail" />
+            <h1 class="text-center">Album Name: @Model.Name</h1>
             <h1 class="text-center">Album Price: @Model.Price</h1>
             <div class="d-flex justify-content-between">
                 <a class="btn bg-success text-white" href="/Tracks/Create?albumId=@Model.Id">Create Track</a>

@@ -1,7 +1,6 @@
 ﻿namespace IRunes.App.Controllers
 {
     using System;
-    using System.Linq;
     using IRunes.App.ViewModels;
     using IRunes.Models;
     using IRunes.Services;
@@ -23,29 +22,21 @@
         }
 
         [Authorize]
-        public ActionResult Create()
+        public ActionResult Create(string albumId)
         {
-            string albumId = this.Request.QueryData["albumId"].FirstOrDefault();
-
             return this.View(new TrackCreateViewModel() { AlbumId = albumId});
         }
 
         [Authorize]
         [HttpPost(ActionName = "Create")]
-        public ActionResult CreateConfirm()
+        public ActionResult CreateConfirm(string albumId,string name, string link, decimal price)
         {
-            string albumId = this.Request.QueryData["albumId"].FirstOrDefault();
-
-            string name = this.Request.FormData["name"].FirstOrDefault();
-            string link = this.Request.FormData["link"].FirstOrDefault();
-            string price = this.Request.FormData["price"].FirstOrDefault();
-
             Track track = new Track()
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = name,
                 Link = link,
-                Price = decimal.Parse(price)
+                Price = price
             };
 
             if (!this.albumService.AddTrackToAlbum(albumId, track))
@@ -57,12 +48,8 @@
         }
 
         [Authorize]
-        public ActionResult Details()
+        public ActionResult Details(string trackId, string albumId)
         {
-            string trackId = this.Request.QueryData["trackId"].FirstOrDefault();
-            string albumId = this.Request.QueryData["albumId"].FirstOrDefault();
-
-
             Track track = this.trackService.GetTrackById(trackId);
 
             if (track == null)
