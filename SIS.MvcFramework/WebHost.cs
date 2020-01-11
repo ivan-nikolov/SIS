@@ -1,6 +1,5 @@
 ﻿namespace SIS.MvcFramework
 {
-    using System;
     using System.Linq;
     using System.Reflection;
     using SIS.HTTP.Enums;
@@ -8,6 +7,8 @@
     using SIS.MvcFramework.Attributes.Action;
     using SIS.MvcFramework.Attributes.Http;
     using SIS.MvcFramework.Attributes.Security;
+    using SIS.MvcFramework.DependencyContainer;
+    using SIS.MvcFramework.Logging;
     using SIS.MvcFramework.Results;
     using SIS.MvcFramework.Routing;
     using SIS.MvcFramework.Sessions;
@@ -18,10 +19,12 @@
         {
             IServerRoutingTable serverRoutingTable = new ServerRoutingTable();
             IHttpSessionStorage httpSessionStorage = new HttpSessionStorage();
+            IServiceProvider serviceProvider = new ServiceProvider();
+            serviceProvider.Add<ILogger, ConsoleLogger>();
 
-            AutoRegisterRoutes(application, serverRoutingTable);
+            AutoRegisterRoutes(application, serverRoutingTable, serviceProvider);
 
-            application.ConfigureServices();
+            application.ConfigureServices(serviceProvider);
 
             application.Configure(serverRoutingTable);
 
@@ -29,21 +32,21 @@
             server.Run();
         }
 
-        private static void AutoRegisterRoutes(IMvcApplication application, IServerRoutingTable serverRoutingTable)
+        private static void AutoRegisterRoutes(IMvcApplication application, IServerRoutingTable serverRoutingTable, IServiceProvider serviceProvider)
         {
             var controllers = application.GetType().Assembly
                 .GetTypes()
                 .Where(type => type.IsClass && !type.IsAbstract
                    && typeof(Controller).IsAssignableFrom(type));
 
-            foreach (var controller in controllers)
+            foreach (var controllerType in controllers)
             {
-                var actions = controller
+                var actions = controllerType
                     .GetMethods(BindingFlags.DeclaredOnly
                     | BindingFlags.Instance
                     | BindingFlags.Public)
                     .Where(x => !x.IsSpecialName
-                        && x.DeclaringType == controller)
+                        && x.DeclaringType == controllerType)
                     .Where(x => x.GetCustomAttributes().All(a => a.GetType() != typeof(NonActionAttribute)));
 
                 foreach (var action in actions)
@@ -51,7 +54,7 @@
                     var attribute = action.GetCustomAttributes() 
                         .Where(x => x.GetType().IsSubclassOf(typeof(BaseHttpAttribute))).LastOrDefault() as BaseHttpAttribute;
 
-                    var path = $"/{controller.Name.Replace("Controller", string.Empty)}/{action.Name}";
+                    var path = $"/{controllerType.Name.Replace("Controller", string.Empty)}/{action.Name}";
                     var httpMethod = HttpRequestMethod.Get;
 
                     if (attribute != null)
@@ -66,15 +69,15 @@
 
                     if (attribute?.ActionName != null)
                     {
-                        path = $"/{controller.Name.Replace("Controller", string.Empty)}/{attribute.ActionName}";
+                        path = $"/{controllerType.Name.Replace("Controller", string.Empty)}/{attribute.ActionName}";
                     }
 
                     serverRoutingTable.Add(httpMethod, path, request => 
                     {
-                        var controllerInstance = Activator.CreateInstance(controller);
-                        ((Controller)controllerInstance).Request = request;
+                        var controllerInstance = serviceProvider.CreateInstance(controllerType) as Controller;
+                        controllerInstance.Request = request;
 
-                        var controllerPrincipal = ((Controller)controllerInstance).User;
+                        var controllerPrincipal = controllerInstance.User;
                         var authorizeAttribute = action.GetCustomAttributes()
                             .LastOrDefault(a => a.GetType() == typeof(AuthorizeAttribute)) as AuthorizeAttribute;
                         if (authorizeAttribute != null &&
@@ -89,7 +92,7 @@
                         return response;
                     });
 
-                    Console.WriteLine(httpMethod + " " + path);
+                    System.Console.WriteLine(httpMethod + " " + path);
                 }
             }
         }

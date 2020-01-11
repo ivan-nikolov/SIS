@@ -11,9 +11,9 @@
     {
         private readonly RunesDbContext context;
 
-        public AlbumService()
+        public AlbumService(RunesDbContext context)
         {
-            this.context = new RunesDbContext();
+            this.context = context;
         }
 
         public bool AddTrackToAlbum(string albumId, Track track)

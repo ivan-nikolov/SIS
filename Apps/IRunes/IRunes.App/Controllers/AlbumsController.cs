@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using IRunes.App.Extensions;
     using IRunes.App.ViewModels;
     using IRunes.Models;
     using IRunes.Services;
@@ -15,11 +14,11 @@
 
     public class AlbumsController : Controller
     {
-        private IAlbumService albumService;
+        private readonly IAlbumService albumService;
 
-        public AlbumsController()
+        public AlbumsController(IAlbumService albumService)
         {
-            this.albumService = new AlbumService();
+            this.albumService = albumService;
         }
 
         [Authorize]

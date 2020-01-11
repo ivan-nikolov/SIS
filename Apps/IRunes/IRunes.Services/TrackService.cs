@@ -8,9 +8,9 @@
     {
         private readonly RunesDbContext context;
 
-        public TrackService()
+        public TrackService(RunesDbContext context)
         {
-            this.context = new RunesDbContext();
+            this.context = context;
         }
 
         public Track GetTrackById(string id)

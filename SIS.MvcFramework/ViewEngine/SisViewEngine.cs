@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -112,7 +111,7 @@ namespace AppViewCodeNamespace
 
         private string GetSharpCode(string viewContent)
         {
-            var lines = viewContent.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            var lines = viewContent.Split(new char[] { '\n', '\r'});
             var cSharpCode = new StringBuilder();
             var supportedOperators = new[] { "for", "if", "else" };
             foreach (var line in lines)
